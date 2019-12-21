@@ -6,15 +6,33 @@ import getscreen
 import getPicture
 import ctypes
 import multiprocessing
+import os
+import json
+if not os.path.exists("config.json"):
+    with open("config.json",'w')as f:
+        json.dump({
+            "resolution":"1920x1080",
+            "screenmode":"window",
+            "keycooldown":0.01,
+            "pointcooldown":2.5
+        },f)
 
-MODE = "window"
-FULLRES = [1920, 1080]
+# MODE = "window"
+# FULLRES = [1920, 1080]
 LEFT = 65
 DOWN = 83
 UP = 87
 RIGHT = 68
-keycooldown = 0.00
-cooldown = 4.4
+# keycooldown = 0.01
+# pointcooldown = 2.5
+with open("config.json","r")as f:
+
+    js=json.load(f)
+    MODE=js["screenmode"]
+    x,y=map(int,js["resolution"].strip().split("x"))
+    FULLRES=[x,y]
+    keycooldown=js["keycooldown"]
+    pointcooldown=js["pointcooldown"]
 import cv2
 
 import threading
@@ -49,17 +67,17 @@ def breakonce():
     press(9)
 
 
-def f11func(mode, fullres):
+def f11func(mode, fullres, cntnum=2,pointcd=2.5):
     cnt = 0
     pos = 0
-    while cnt <= 2:
+    while cnt <= cntnum:
         cnt += 1
         picans = []
         piclock = False
         num = 0
         beg = time.time()
         while True:
-
+            print("正在读取点")
             picname = "screen.bmp"
             w, h = getscreen.getpicture(picname, mode, fullres)
             img = cv2.imread(picname)
@@ -74,9 +92,7 @@ def f11func(mode, fullres):
                 else:
                     picans = ans
                     num = 0
-                # print("getans=", ans)
-                # picname = f"./temp/screen{num}.bmp"
-                # w, h = getscreen.getpicture(picname, MODE, FULLRES)
+
             elif booltrue and piclock == True:
                 piclock = False
                 beg = time.time()
@@ -97,9 +113,10 @@ def f11func(mode, fullres):
                 else:
                     break
             press(13)
-            time.sleep(2.5)
+            time.sleep(pointcd)
             # print("continue")
             # print(end - beg)
+    time.sleep(2)
     print("破解结束")
 
 
@@ -111,21 +128,16 @@ f11thread = None
 def presskey(key):
     global FULLRES
     global MODE
-
+    global f11thread
+    global pointcooldown
     if not hasattr(key, "name"):
         return
     if key.name == "f11":
-        global f11thread
-        if f11thread is None:
-            f11thread = multiprocessing.Process(target=f11func, args=(MODE, FULLRES))
-            f11thread.start()
-        else:
-            if f11thread.is_alive():
-                f11thread.terminate()
-            f11thread = None
-            print("restart")
-            f11thread = multiprocessing.Process(target=f11func, args=(MODE, FULLRES))
-            f11thread.start()
+        print("restart")
+        if f11thread is not None and f11thread.is_alive():
+            f11thread.terminate()
+        f11thread = multiprocessing.Process(target=f11func, args=(MODE, FULLRES,2,pointcooldown))
+        f11thread.start()
     if key.name == "f6":
         if f11thread is None:
             pass
@@ -136,13 +148,17 @@ def presskey(key):
     if key.name == "f10":
         breakonce()
     elif key.name == "f9":
-        for i in range(3):
-            breakonce()
-            time.sleep(cooldown)
+        print("restart")
+        if f11thread is not None and f11thread.is_alive():
+            f11thread.terminate()
+        f11thread = multiprocessing.Process(target=f11func, args=(MODE, FULLRES, 0,pointcooldown))
+        f11thread.start()
     elif key.name == "f8":
-        for i in range(4):
-            breakonce()
-            time.sleep(cooldown)
+        print("restart")
+        if f11thread is not None and f11thread.is_alive():
+            f11thread.terminate()
+        f11thread = multiprocessing.Process(target=f11func, args=(MODE, FULLRES, 1,pointcooldown))
+        f11thread.start()
     elif key.name == "f7":
         if MODE == "window":
             MODE = "fullscreen"
@@ -153,8 +169,6 @@ def presskey(key):
             MODE = "window"
         # win32api.MessageBox(0, f"切换模式为 {MODE}", "提醒", win32con.MB_OK)
         print(f"切换为 {MODE}")
-    elif key.name == 'ctrl_l':
-        exit(0)
     else:
         return
 
@@ -162,15 +176,27 @@ def presskey(key):
 if __name__ == "__main__":
     print("""
     使用教程-----
-    f7 切换全屏模式 默认为无边框窗口
-    按一次f7切换到全屏模式 需要f7后手动输入全屏分辨率 再按一次切回无边框窗口模式
+    游戏模式最好为16:9
+    f7 切换全屏模式 
+    默认为无边框窗口并且兼容大部分分辨率
+    按一次f7切换到全屏模式 !![[需要f7后手动输入全屏分辨率]]!! 
+    再按一次切回无边框窗口模式
     有边框窗口仅支持200%缩放下的1920x1080
-    f8 指纹连续4次破解
-    f9 指纹连续3次破解
-    f10 指纹破解一次
+    f8 开始/重新开始点点破解2次
+    f9 开始/重新开始点点破解1次
+    f10 指纹破解一次 需要在大指纹显示出来之后再按!!!!
     f6 结束所有点点破解
     f11 开始/重新开始点点破解3次
-    
+    注意:!!! 点点点和指纹 都是默认选项框在左上角的 如果破解之前选项框不在左上角(第一个)请手动归位
+    关于点点点破解:
+    请在插入u盘之后开始按键 或者在5个点开始闪烁的时候开始按键 不要等五个点最后一次闪完了再按破解键
+    点点点破解开始后会持续进行屏幕截图 比较吃性能 如果电脑太卡可能会导致破解失败
+    配置文件说明:
+     "resolution":"1920x1080", 全屏化分辨率
+            "screenmode":"window", window/fullscreen 无边框窗口化/全屏
+            "keycooldown":0.01, 按键抬起之间的冷却(默认10ms)觉得自己电脑可以的可以调成0
+            "pointcooldown":2.5 点点点两次选位置之间的冷却
     """)
+
     with Listener(on_press=presskey) as listener:
         listener.join()
