@@ -3,7 +3,7 @@ gtaV diamond and casino heist hacking script
 ## deploy  
 python 3.6+ (auther is py37)  
 - pip install -r requirements.txt  
-open gta-finger.py
+run gta-finger.py
 ## config.json  
   ```json
  {"resolution":"1920x1080", //full screen mode
@@ -14,7 +14,7 @@ open gta-finger.py
 ```
 
 ## pack
-pack.py
+run pack.py
 ## packed (Chinese version)
 链接: https://pan.baidu.com/s/1pHOQDSd0R0YwmiohUyoFGA   
 提取码: 6y4z 复制这段内容后打开百度网盘手机App，操作更方便哦
