@@ -8,8 +8,8 @@ open gta-finger.py
   ```json
  {"resolution":"1920x1080", //full screen mode
             "screenmode":"window", //window/fullscreen bored window/full screen
-            "keycooldown":0.01, //按键抬起之间的冷却(默认10ms)觉得自己电脑可以的可以调成0
-            "pointcooldown":2.5 //点点点两次选位置之间的冷却
+            "keycooldown":0.01, //CD time between key presses (default 10ms), If you think your computer is good, you set it to 0
+            "pointcooldown":2.5 //point point point hacking CD Timebetween selected positions
 }
 ```
 
