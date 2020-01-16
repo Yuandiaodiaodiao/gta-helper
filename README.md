@@ -1,3 +1,5 @@
+# looking for english version?
+[english-version](https://github.com/Yuandiaodiaodiao/gta-helper/tree/englist-version)
 # gta-helper
 gtaV 名钻 dc 破解
 ## 部署  
