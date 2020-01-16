@@ -77,14 +77,14 @@ def f11func(mode, fullres, cntnum=2,pointcd=2.5):
         num = 0
         beg = time.time()
         while True:
-            print("正在读取点")
+            print("Reading points")
             picname = "screen.bmp"
             w, h = getscreen.getpicture(picname, mode, fullres)
             img = cv2.imread(picname)
             ans = gtapoint.solvenum(img)
             booltrue = all(map(lambda x: x >= 0, ans))
             if booltrue and piclock == False:
-                # print("间隔", time.time() - beg)
+                # print("Delay", time.time() - beg)
                 beg = time.time()
                 piclock = True
                 if picans == ans:
@@ -97,7 +97,7 @@ def f11func(mode, fullres, cntnum=2,pointcd=2.5):
                 piclock = False
                 beg = time.time()
             if num > 0 and time.time() - beg > 1:
-                print("开始破解")
+                print("Start hacking the door")
                 break
 
         # print("picans=", picans)
@@ -117,7 +117,7 @@ def f11func(mode, fullres, cntnum=2,pointcd=2.5):
             # print("continue")
             # print(end - beg)
     time.sleep(2)
-    print("破解结束")
+    print("Hacking done")
 
 
 import gtapoint
@@ -162,40 +162,40 @@ def presskey(key):
     elif key.name == "f7":
         if MODE == "window":
             MODE = "fullscreen"
-            print("请输入全屏分辨率 如 1920x1080")
+            print("Please enter full screen resolution, example : 1920x1080")
             w, h = map(int, input().strip().split("x"))
             FULLRES = [w, h]
         else:
             MODE = "window"
         # win32api.MessageBox(0, f"切换模式为 {MODE}", "提醒", win32con.MB_OK)
-        print(f"切换为 {MODE}")
+        print(f"switch to {MODE}")
     else:
         return
 
 
 if __name__ == "__main__":
     print("""
-    使用教程-----
-    游戏模式最好为16:9
-    f7 切换全屏模式 
-    默认为无边框窗口并且兼容大部分分辨率
-    按一次f7切换到全屏模式 !![[需要f7后手动输入全屏分辨率]]!! 
-    再按一次切回无边框窗口模式
-    有边框窗口仅支持200%缩放下的1920x1080
-    f8 开始/重新开始点点破解2次
-    f9 开始/重新开始点点破解1次
-    f10 指纹破解一次 需要在大指纹显示出来之后再按!!!!
-    f6 结束所有点点破解
-    f11 开始/重新开始点点破解3次
-    注意:!!! 点点点和指纹 都是默认选项框在左上角的 如果破解之前选项框不在左上角(第一个)请手动归位
-    关于点点点破解:
-    请在插入u盘之后开始按键 或者在5个点开始闪烁的时候开始按键 不要等五个点最后一次闪完了再按破解键
-    点点点破解开始后会持续进行屏幕截图 比较吃性能 如果电脑太卡可能会导致破解失败
-    配置文件说明:
-     "resolution":"1920x1080", 全屏化分辨率
-            "screenmode":"window", window/fullscreen 无边框窗口化/全屏
-            "keycooldown":0.01, 按键抬起之间的冷却(默认10ms)觉得自己电脑可以的可以调成0
-            "pointcooldown":2.5 点点点两次选位置之间的冷却
+    Tutorial-----
+    16:9 best
+    f7 switch to fullscreen mode 
+    Defaults to borderless windows and is compatible with most resolutions
+    Press f7 once to switch to full screen mode !![[after press F7, needs enter full screen resolution manually]]!! 
+    Press again to switch back to borderless window mode
+    Bordered windows only support 1920x1080 at 200% zoom
+    f8 start/restart point point point hacking twice
+    f9 start/restart point point point hacking once
+    f10 finger print hacking once, needs press afrer the big finger print picture shows on
+    f6 shut down all the point point point hacking
+    f11 start/restart point point point hacking three times
+    Notice:!!! Point Hacking and Finger print hacking are the default option boxes in the upper left corner, If the option box is not in the upper left corner (the first one) before hacking, please return it manually
+    About point point point hacking:
+    Please press the key after plug in the USB flash drive. Or start to press when 5 points start to flash. Don't wait for the last five points to flash before pressing the crack button.
+    After point point point hacking, the screenshot will continue to be taken. The performance is relatively high. If the computer is too stuck, the cracking may fail.
+    config file :
+     "resolution":"1920x1080", Full screen resolution
+            "screenmode":"window", window/fullscreen Borderless windowing / full screen
+            "keycooldown":0.01, CD time between key presses (default 10ms), If you think your computer is good, you set it to 0
+            "pointcooldown":2.5 point point point hacking CD Timebetween selected positions
     """)
 
     with Listener(on_press=presskey) as listener:

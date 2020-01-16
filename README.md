@@ -1,21 +1,21 @@
 # gta-helper
-gtaV 名钻 dc 破解
-## 部署  
-python 3.6+ (本人py37)  
+gtaV diamond and casino heist hacking script
+## deploy  
+python 3.6+ (auther is py37)  
 - pip install -r requirements.txt  
-启动gta-finger.py
-## 配置文件 config.json  
+run gta-finger.py
+## config.json  
   ```json
- {"resolution":"1920x1080", //全屏化分辨率
-            "screenmode":"window", //window/fullscreen 无边框窗口化/全屏
-            "keycooldown":0.01, //按键抬起之间的冷却(默认10ms)觉得自己电脑可以的可以调成0
-            "pointcooldown":2.5 //点点点两次选位置之间的冷却
+ {"resolution":"1920x1080", //full screen mode
+            "screenmode":"window", //window/fullscreen bored window/full screen
+            "keycooldown":0.01, //CD time between key presses (default 10ms), If you think your computer is good, you set it to 0
+            "pointcooldown":2.5 //point point point hacking CD Timebetween selected positions
 }
 ```
 
-## 打包
-pack.py
-## 预打包
+## pack
+run pack.py
+## packed (Chinese version)
 链接: https://pan.baidu.com/s/1pHOQDSd0R0YwmiohUyoFGA   
 提取码: 6y4z 复制这段内容后打开百度网盘手机App，操作更方便哦
  
