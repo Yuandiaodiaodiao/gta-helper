@@ -6,6 +6,10 @@ def getpic(mode,FULLRES):
     w,h = getscreen.getpicture(picname,mode,FULLRES)
     # w, h = 1920, 1080
     fullimg = cv2.imread(picname)
+    if (w/h - 16/9) > 0.01:
+        ww = h*16//9
+        fullimg = fullimg[:,(w - ww)//2 :w - (ww-w)//2, :]
+        w = h*16/9
     BL = 0.49 * w
     BT = 0.115 * h
     BR = 0.71 * w
