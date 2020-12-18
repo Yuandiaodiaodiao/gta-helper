@@ -8,20 +8,41 @@ import phash
 from functools import reduce
 import math
 from img_trim import trim_iterative
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='TRUE'
 
-def findresult_phash(temp,target):
-    l=reduce(phash.get_mh,map(phash.get_img_gray_bit,[temp,target]))
+RESOLUTION_PERSETS={
+    "1080p":[1920,1080],
+    "2k":[2560,1440],
+    "4k":[3840,2160]
+}
+RESOLUTION=RESOLUTION_PERSETS["4k"]
+def get_gtav_image(FULLRES=RESOLUTION):
+    # img = getpicture("Grand Theft Auto V", mode="fullscreen", FULLRES=[3840, 2160])
+    img = getpicture("Grand Theft Auto V",
+                     mode="fullscreen",
+                     FULLRES=FULLRES)
+    return img
+
+
+def findresult_phash(temp, target):
+    l = reduce(phash.get_mh, map(phash.get_img_gray_bit, [temp, target]))
     return l
+
+
 from skimage.metrics import structural_similarity as ssim
+
+
 def ssim_match(imfil1, imfil2):
     res = ssim(imfil1, imfil2)
     return res
-def findresult(temp, target, thor=0.3,bgremove=False):
 
+
+def findresult(temp, target, thor=0.3, bgremove=False):
     # cv2.imshow('objDetect1', target)
 
     # find the match position
-    pos = ac.find_template(temp, target, threshold=thor,bgremove=bgremove)
+    pos = ac.find_template(temp, target, threshold=thor, bgremove=bgremove)
     if pos is None:
         # print("no find")
         return False
@@ -30,6 +51,7 @@ def findresult(temp, target, thor=0.3,bgremove=False):
     # print("confidenc=", pos["confidence"])
     return circle_center_pos, pos["confidence"]
 
+
 def cutblack(img):
     contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnt = contours[0]
@@ -37,13 +59,14 @@ def cutblack(img):
     crop = img[y:y + h, x:x + w]
     return crop
 
+
 def prepareimage(cast1=None,
-          cast2=None, img=None,
-          resize_interpolation=cv2.INTER_BITS,show=False):
+                 cast2=None, img=None,
+                 resize_interpolation=cv2.INTER_BITS, show=False, resize=(1280, 720)):
     hd2 = 0.003
     if cast1 is None:
         # cast1 = [0.346, 0.870+hd2, 0.226, 0.4165]
-        cast1 = [0.332 + 0.006, 0.872 + hd2, 0.226, 0.4165]
+        cast1 = [0.332 - 0.015, 0.872 + hd2+0.01, 0.226, 0.4165]
     if cast2 is None:
         # cast2 = [0.329+0.006, 0.866+hd2, 0.538542, 0.75]
         # cast2 = [0.329+0.006, 0.871+hd2, 0.538542, 0.7467]
@@ -53,7 +76,7 @@ def prepareimage(cast1=None,
 
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img720p = img
-    img720p = cv2.resize(img720p, (1280, 720), interpolation=resize_interpolation)
+    img720p = cv2.resize(img720p, resize, interpolation=resize_interpolation)
     # plt.imshow(img720p)
     # plt.show()
     h, w = img720p.shape
@@ -62,6 +85,7 @@ def prepareimage(cast1=None,
     _, imgleft = cv2.threshold(imgleft, 60, 255, cv2.THRESH_BINARY)
     # plt.subplot(121)
     # plt.imshow(imgleft,cmap="gray")
+    # plt.show()
 
     imgright = castimg(img720p, cast2, h, w)
     imgright = trim_iterative(imgright)
@@ -69,46 +93,72 @@ def prepareimage(cast1=None,
     imgright = cv2.resize(imgright, (imgleft.shape[1], imgleft.shape[0]), interpolation=resize_interpolation)
     _, imgright = cv2.threshold(imgright, 60, 255, cv2.THRESH_BINARY)
 
-    return imgleft,imgright,imgright_bgr
+    return imgleft, imgright, imgright_bgr
 
 
 def splitline(imgleft):
     lh, lw = imgleft.shape
-    lineinfo = [0]
+    lineinfo = []
     maxline = lw * 255
     for i in range(lh):
         linesum = np.sum(imgleft[i])
-        if linesum >= maxline * 0.99:
+        if linesum >= maxline * 0.95:
             lineinfo.append(i)
-    lineinfo.append(lh)
     # print(lineinfo)
     lineinfo_unique = []
-    last = 0
+    last = -1
+    temp = []
+    temp2 = []
     for i in lineinfo:
-        if i != last + 1:
-            lineinfo_unique.append(i)
+        if i == last + 1:
+            temp.append(i)
+        else:
+            if temp is not None and len(temp) > 0:
+                temp2.append(temp)
+            temp = [i]
         last = i
+    if temp is not None and len(temp) > 0:
+        temp2.append(temp)
+    # print(temp2)
+    # 第一个进入的线是 第一个框的上粗线
+    flip = -1
+    for i in temp2:
+        # flip==0 取上边缘-1
+        # flip==-1 取下边缘+1
+        if flip == 0:
+            i[flip] -= 3
+        elif flip == -1:
+            i[flip] += 3
+        lineinfo_unique.append(i[flip])
+        flip ^= -1
+
+
+    if len(lineinfo_unique) % 2 != 0:
+        print("警告 lineinfo不是2的倍数")
+    print(f"拆分为{len(lineinfo_unique)/2}份")
     return lineinfo_unique
 
 
-def hsplit(image):
-    lineinfo_unique=splitline(image)
-    for i in range(0, len(lineinfo_unique), 2):
-        start = lineinfo_unique[i]
-        end = lineinfo_unique[i + 1]
-        cast = [start + 5, end - 3, 0, lw]
-        ileft = castimg(imgleft, cast)
-        iright = castimg(imgright, cast)
+def hsplit(image, lineinfo):
+    h, w = image.shape[0], image.shape[1]
+    res = []
+    for start, end in zip(*([iter(lineinfo)] * 2)):
+        cast = [start, end, 0, w]
+        print(cast)
+        ileft = castimg(image, cast)
+        res.append(ileft)
+    return res
+
 
 def solve(cast1=None,
           cast2=None, img=None,
-          resize_interpolation=cv2.INTER_BITS,show=False,save_cpu=None):
+          resize_interpolation=cv2.INTER_BITS, show=False, save_cpu=None):
     if save_cpu is None:
-        save_cpu=set()
-    imgleft,imgright,imgright_bgr=prepareimage(cast1,cast2,img,resize_interpolation,show)
+        save_cpu = set()
+    imgleft, imgright, imgright_bgr = prepareimage(cast1, cast2, img, resize_interpolation, show)
 
     lh, lw = imgleft.shape
-    lineinfo_unique=splitline(imgleft)
+    lineinfo_unique = splitline(imgleft)
     # print(lineinfo_unique)
     # plt.show()
 
@@ -116,43 +166,28 @@ def solve(cast1=None,
     imgs = []
 
     realconf = []
-    bingdingls=[]
-    for i in range(0, len(lineinfo_unique), 2):
-        if i//2 in save_cpu:
-            imgs.append(None)
-            leftimgs.append(None)
-            bingdingls.append(None)
-            realconf.append(None)
-            continue
-
-        start = lineinfo_unique[i]
-        end = lineinfo_unique[i + 1]
-        cast = [start+5, end-3, 0, lw]
-        ileft = castimg(imgleft, cast)
-        iright = castimg(imgright, cast)
-
+    bingdingls = []
+    leftimgs = hsplit(imgleft, lineinfo_unique)
+    for i, ileft in enumerate(leftimgs):
         # res = findresult(cv2.cvtColor(ileft, cv2.COLOR_GRAY2BGR),
         #                  cv2.cvtColor(iright, cv2.COLOR_GRAY2BGR),
         #                  0.01)
-        res=False
+        res = False
         from img_trim import trim_iterative
 
         # ileft,iright=trim_iterative(ileft),trim_iterative(iright)
         # iright = cv2.resize(iright, (ileft.shape[1], ileft.shape[0]), interpolation=resize_interpolation)
         # _, iright = cv2.threshold(iright, 60, 255, cv2.THRESH_BINARY)
 
-        imgs.append(iright)
-        leftimgs.append(ileft)
-
-        bigres=findresult(imgright_bgr,cv2.cvtColor(ileft, cv2.COLOR_GRAY2BGR),0.35)
-        index="?"
-        if bigres!=False:
-            poscenter=(bigres[0][0][1]+bigres[0][1][1])/2
-            percentage=poscenter/imgright_bgr.shape[0]
-            index=math.floor(8*percentage)
+        bigres = findresult(imgright_bgr, cv2.cvtColor(ileft, cv2.COLOR_GRAY2BGR), 0.35)
+        index = "?"
+        if bigres != False:
+            poscenter = (bigres[0][0][1] + bigres[0][1][1]) / 2
+            percentage = poscenter / imgright_bgr.shape[0]
+            index = math.floor(8 * percentage)
         else:
-            percentage=0
-        print(f"{i // 2}位置 对应{bigres} percentage={percentage*8} index={index}")
+            percentage = 0
+        print(f"{i // 2}位置 对应{bigres} percentage={percentage * 8} index={index}")
         bingdingls.append(index)
 
         # res2=ssim_match(ileft,iright)
@@ -168,8 +203,8 @@ def solve(cast1=None,
 
     if show:
         submum = 1
-        col=3
-        for index,(l,r) in enumerate(zip(leftimgs,imgs)):
+        col = 3
+        for index, (l, r) in enumerate(zip(leftimgs, imgs)):
             conf = realconf[index]
             plt.subplot(len(leftimgs), col, submum)
             plt.imshow(l, cmap="gray")
@@ -188,43 +223,46 @@ def solve(cast1=None,
             # submum += 1
         plt.show()
 
-    return bingdingls,realconf
+    return bingdingls, realconf
 
-def from_to(nowpos,selfid):
-    if nowpos<selfid:
+
+def from_to(nowpos, selfid):
+    if nowpos < selfid:
         # 往右直接走就行
-        return selfid-nowpos
-    elif nowpos==selfid:
+        return selfid - nowpos
+    elif nowpos == selfid:
         return 0
     else:
         # 小于 要往左走 换算成先走到0 然后再走到对应位置
-        return 8-nowpos+selfid
+        return 8 - nowpos + selfid
+
+
 def mulsolve2(press_str):
-    ready=set()
-    res_all=[]
-    res_sum=[]
+    ready = set()
+    res_all = []
+    res_sum = []
     for i in range(8):
-        img = getpicture("Grand Theft Auto V", mode="fullscreen", FULLRES=[3840, 2160])
-        res,res2 = solve(None, None, img,show=False)
+        img = get_gtav_image()
+        res, res2 = solve(None, None, img, show=False)
         # res_sum.append(res2)
         res_all.append(res)
         for i in range(8):
             press_str("right")
             press_str("down")
-    possible_ans=[]
+    possible_ans = []
     for i in range(8):
         possible_ans.append([])
     for i in range(8):
         for j in range(8):
-            x=res_all[j][i]
-            if x!='?' and x is not None:
-                #表示第j轮的时候 显示的是位置x 期望的位置是i
-                possible_ans[i].append((j,x))
+            x = res_all[j][i]
+            if x != '?' and x is not None:
+                # 表示第j轮的时候 显示的是位置x 期望的位置是i
+                possible_ans[i].append((j, x))
 
     print(possible_ans)
-    for id,indexitem in enumerate(possible_ans):
-        ss=set()
-        newans=[]
+    for id, indexitem in enumerate(possible_ans):
+        ss = set()
+        newans = []
         for item in indexitem:
             phase = 0
             j, x = item
@@ -238,74 +276,78 @@ def mulsolve2(press_str):
             if phase not in ss:
                 ss.add(phase)
                 newans.append(item)
-        possible_ans[id]=newans
+        possible_ans[id] = newans
 
     print(possible_ans)
-    def try_all_ans(ans,deep):
-        if deep>=8:return
+
+    def try_all_ans(ans, deep):
+        if deep >= 8: return
         # 设当前相位是0
-        phase=0
+        phase = 0
         for item in possible_ans[deep]:
-            #第j轮的时候 自己的位置在x的位置上
-            lastphase=phase
-            j,x=item
+            # 第j轮的时候 自己的位置在x的位置上
+            lastphase = phase
+            j, x = item
             # 那首先要phase go right j 达到第j轮的位置
-            delta1=from_to(lastphase,j)
-            phase+=delta1
+            delta1 = from_to(lastphase, j)
+            phase += delta1
             # 然后看到自己在x的位置上 反推出x应该走n步right到达deep
-            phase%=8
-            delta2=from_to(x,deep)
-            phase+=delta2
-            phase%=8
+            phase %= 8
+            delta2 = from_to(x, deep)
+            phase += delta2
+            phase %= 8
             # 这个位置进行操作
-            delta3=from_to(lastphase,phase)
+            delta3 = from_to(lastphase, phase)
             print(f"deep={deep} delta3={delta3} delta1={delta1} delta2={delta2}")
             for i in range(delta3):
                 press_str("right")
 
-            if deep+1<8:
+            if deep + 1 < 8:
                 press_str('down')
-                try_all_ans(ans,deep+1)
+                try_all_ans(ans, deep + 1)
                 press_str('up')
-    try_all_ans(possible_ans,0)
-        # for index,item in enumerate(res):
-        #     print(f'index={index} item={item}')
-        #     if index==item or index in ready:
-        #         # 当前就位的
-        #         ready.add(index)
-        #         press_str("down")
-        #     elif item!='?':
-        #         #已经定位到了 直接算出位移
-        #         delta=index-item
-        #         if delta<0:
-        #             delta=8+delta
-        #             for i in range(abs(delta)):
-        #                 print("right")
-        #                 press_str("right")
-        #         elif delta>0:
-        #
-        #             for i in range(abs(delta)):
-        #                 print("right")
-        #                 press_str("right")
-        #         ready.add(index)
-        #         press_str("down")
-        #     else:
-        #         # 找不到  下一个
-        #         print("right")
-        #         press_str("right")
-        #         press_str("down")
-        #         pass
-        #
-        # if len(ready)==8:
-        #     break
+
+    try_all_ans(possible_ans, 0)
+    # for index,item in enumerate(res):
+    #     print(f'index={index} item={item}')
+    #     if index==item or index in ready:
+    #         # 当前就位的
+    #         ready.add(index)
+    #         press_str("down")
+    #     elif item!='?':
+    #         #已经定位到了 直接算出位移
+    #         delta=index-item
+    #         if delta<0:
+    #             delta=8+delta
+    #             for i in range(abs(delta)):
+    #                 print("right")
+    #                 press_str("right")
+    #         elif delta>0:
+    #
+    #             for i in range(abs(delta)):
+    #                 print("right")
+    #                 press_str("right")
+    #         ready.add(index)
+    #         press_str("down")
+    #     else:
+    #         # 找不到  下一个
+    #         print("right")
+    #         press_str("right")
+    #         press_str("down")
+    #         pass
+    #
+    # if len(ready)==8:
+    #     break
     print(possible_ans)
     # for i in res_sum:
     #     print(i)
+
+
 def mulsolve(press_str):
-    res_all=[]
+    res_all = []
     for i in range(8):
         time.sleep(0.1)
-        res=singlesolve(press_str,show=False)
+        res = singlesolve(press_str, show=False)
 
         # print(list(map(lambda x:int(x*100),res)))
         res_all.append(res)
@@ -314,16 +356,16 @@ def mulsolve(press_str):
     plt.show()
     for i in res_all:
         print(i)
-    bestans=[]
+    bestans = []
     for i in range(8):
-        maxnum=0
-        maxid=None
+        maxnum = 0
+        maxid = None
         for j in range(8):
             # if res_all[j][i]>maxnum:
             #     maxnum=res_all[j][i]
             #     maxid=j
-            if res_all[j][i]==i:
-                bestans.append([j,0])
+            if res_all[j][i] == i:
+                bestans.append([j, 0])
         # bestans.append([maxid,int(maxnum*100)])
 
     print(bestans)
@@ -333,9 +375,9 @@ def mulsolve(press_str):
     #     press_str("down")
 
 
-def singlesolve2(press_str,show=False):
-    img = getpicture("Grand Theft Auto V",mode="fullscreen",FULLRES=[3840,2160])
-    res = solve(None, None, img,show=show)
+def singlesolve2(press_str, show=False):
+    img = get_gtav_image()
+    res = solve(None, None, img, show=show)
     # print(res)
     keylist = []
     for i in res:
@@ -344,21 +386,23 @@ def singlesolve2(press_str,show=False):
 
         # 至少有一个 没有匹配
 
-            # if i != 0:
-            #     keylist.append("down")
-            # else:
-            #     keylist.append("right")
-            #     keylist.append("down")
+        # if i != 0:
+        #     keylist.append("down")
+        # else:
+        #     keylist.append("right")
+        #     keylist.append("down")
     # print(keylist)
     for i in keylist:
         press_str(i)
     return res
 
-def singlesolve(press_str,show=False):
-    img = getpicture("Grand Theft Auto V",mode="fullscreen",FULLRES=[3840,2160])
+
+def singlesolve(press_str, show=False):
+    # img = getpicture("Grand Theft Auto V", mode="fullscreen", FULLRES=[3840, 2160])
+    img = get_gtav_image()
     # plt.imshow(img)
     # plt.show()
-    res = solve(None, None, img,show=show)
+    res = solve(None, None, img, show=show)
     plt.show()
     # print(res)
     keylist = []
@@ -368,15 +412,16 @@ def singlesolve(press_str,show=False):
 
         # 至少有一个 没有匹配
 
-            # if i != 0:
-            #     keylist.append("down")
-            # else:
-            #     keylist.append("right")
-            #     keylist.append("down")
+        # if i != 0:
+        #     keylist.append("down")
+        # else:
+        #     keylist.append("right")
+        #     keylist.append("down")
     # print(keylist)
     for i in keylist:
         press_str(i)
     return res
+
 
 def train():
     import copy

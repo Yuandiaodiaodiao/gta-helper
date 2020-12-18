@@ -1,0 +1,5 @@
+aircv
+pynput
+opencv-python
+numpy
+matplotlib

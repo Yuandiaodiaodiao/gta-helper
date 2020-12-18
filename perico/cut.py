@@ -4,6 +4,7 @@
 from pynput.keyboard import Listener
 from main import singlesolve,mulsolve
 from keyboardsim import press_str
+from main import get_gtav_image
 def presskey(key):
    t=None
    try:
@@ -12,7 +13,7 @@ def presskey(key):
       pass
    if t is not None and t in ["c"]:
        from getscreen import getpicture
-       img = getpicture("Grand Theft Auto V", mode="fullscreen", FULLRES=[3840, 2160])
+       img = get_gtav_image()
        import cv2
        cv2.imwrite("temp.png", img)
 
