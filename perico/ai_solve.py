@@ -33,10 +33,10 @@ def ai_solve():
 
         for i in range(abs(rightstep)):
             if rightstep>0:
-                press_str("right",cooldown=0)
+                press_str("right")
             else:
-                press_str("left",cooldown=0)
-        press_str("down",cooldown=0)
+                press_str("left")
+        press_str("down")
     cv2.imwrite("temp.png",imgs)
     # for i in range(8):
     #     press_str("right")

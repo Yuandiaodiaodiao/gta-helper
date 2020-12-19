@@ -3,7 +3,7 @@ import ctypes
 import win32api
 import win32con
 from argsolver import args
-keycooldown = 0.01+args.keydelay
+keycooldown = 0.001+args.keydelay
 LEFT = 37
 UP = 38
 RIGHT = 39

@@ -72,10 +72,9 @@ def tp_hack():
     time.sleep(0.5)
     for item in downlist:
         press_str("enter")
-        time.sleep(0.1)
-        print("down")
+        time.sleep(0.5)
         for i in range(item):
-            press_str("down", cooldown=0)
+            press_str("down")
         time.sleep(0.5)
     # press_str("enter")
 
@@ -117,18 +116,19 @@ def presskey(key):
         # ai_solve()
     if t == args.afk:
         #自动挂机
+        print("afk start")
         threadPool.submit(afk)
     if t ==args.stop:
         #停止当前的动作
         print("stop")
         restart()
-    if t  in ["eeeee"]:
+    if t  =="eeeee":
         #给深度学习构建数据集
         # 采样 并切割图片 写入文件夹 创建label
         from train_data_collect import collect_data
         # threadPool.submit(collect_data)
         collect_data()
-    if t is not None and t in [",,,,,,"]:
+    if t == "eeeeeee":
         #调到都是0号指纹后自动破解
         for i in range(8):
             for j in range(i):
