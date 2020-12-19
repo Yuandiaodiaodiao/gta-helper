@@ -56,14 +56,24 @@
         停止所有正在运行的动作 :
         <el-input placeholder="backspace" v-model="config.stop"></el-input>
       </div>
+      <div class="lineinput">
+        按键延迟 <br/>
+        (keydown 与keyup之间的时间<br/>
+        如果丢键可以开高这个) :
+        <el-input placeholder="0" v-model="config.keydelay"></el-input>
+      </div>
       <el-button style="width: 100px;margin: 10px" @click="restart()">重启服务</el-button>
-      <el-switch
-          style="width: 100px"
-          v-model="advanced"
-          active-color="#13ce66">
-      </el-switch>
+      <div class="lineinput">
+        高级选项:
+        <el-switch
+            style="width: 100px"
+            v-model="advanced"
+            active-color="#13ce66">
+        </el-switch>
+      </div>
+
       <div v-show="advanced" class="lineinput">
-        高级选项: <br/>左侧指纹图像裁切比例 :
+       左侧指纹图像裁切比例 :
         <el-input v-for="item in [0,1,2,3]" v-model="config.cast[item]"></el-input>
       </div>
     </el-main>
@@ -84,7 +94,8 @@ const loadconfig = () => {
     afk: '',
     stop: 'backspace',
     mode: 'fullscreen',
-    cast: [0.317, 0.885, 0.226, 0.4165]
+    cast: [0.317, 0.885, 0.226, 0.4165],
+    keydelay:0,
   }
   const fs = require("fs")
   try {

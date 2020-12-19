@@ -2,8 +2,8 @@ import time
 import ctypes
 import win32api
 import win32con
-
-keycooldown = 0.01
+from argsolver import args
+keycooldown = 0.01+args.keydelay
 LEFT = 37
 UP = 38
 RIGHT = 39
@@ -28,10 +28,9 @@ keybind = {
 def press(key, cooldown=keycooldown):
     MapKey = ctypes.windll.user32.MapVirtualKeyA
     win32api.keybd_event(key, MapKey(key, 0), 0, 0)
-    # time.sleep(cooldown)
+    time.sleep(cooldown)
     win32api.keybd_event(key, MapKey(key, 0), win32con.KEYEVENTF_KEYUP, 0)
-    # time.sleep(cooldown)
-    # time.sleep(0.001)
+    time.sleep(cooldown)
 
 
 def press_str(keystr,**kwargs):

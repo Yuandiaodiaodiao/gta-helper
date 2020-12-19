@@ -21,9 +21,10 @@ jobs:
       with:
         python-version: 3.8
     - name: Install python dependencies
+      working-directory: perico
       run: |
         python -m pip install --upgrade pip
-        python ./perico/install.py
+        python install.py
     - name: build python exe
       working-directory: perico
       run: python pack.py
@@ -36,5 +37,5 @@ jobs:
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
-        name: ui.exe
-        path: ui/build/ui Setup 1.0.0.exe
+        name: gta-helper.exe
+        path: ui/build/gta-helper Setup 1.0.0.exe
