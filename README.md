@@ -28,7 +28,7 @@
 你需要将其调整到合适的比例使得截出来的图和16:9截出来的图相似  
 重点是上下的外框要截到
 图中的是1080p下的 4k分辨率下会宽一些 
-![temp.png](README.assets/temp.png)
+![temp.png](README.assets/tempx.png)
 
 
 
