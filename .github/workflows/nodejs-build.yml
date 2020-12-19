@@ -4,9 +4,9 @@
 name: ElectronBuild
 on:
   push:
-    paths:
-    - 'ui/**'
-    - 'src/**'
+    tags:
+      - 'v*.*.*'
+      
 jobs:
   build:
     runs-on: windows-latest
@@ -33,3 +33,8 @@ jobs:
       run: |
         npm ci
         npm run buildall
+    - name: 'Upload Artifact'
+      uses: actions/upload-artifact@v2
+      with:
+        name: ui.exe
+        path: ui/build/ui Setup 1.0.0.exe
