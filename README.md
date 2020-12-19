@@ -30,6 +30,25 @@
 图中的是1080p下的 4k分辨率下会宽一些 
 ![temp.png](README.assets/temp.png)
 
+
+
+## LICENSE
+    gta-helper
+    Copyright (C) 2020  yuandiaodiaodiao
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 # gta-helper-old
 gtaV 名钻 dc 破解
 ## 部署  
@@ -51,4 +70,4 @@ pack.py
 链接: https://pan.baidu.com/s/1pHOQDSd0R0YwmiohUyoFGA   
 提取码: 6y4z 复制这段内容后打开百度网盘手机App，操作更方便哦
 
-​    
+   
