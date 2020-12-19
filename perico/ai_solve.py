@@ -15,12 +15,12 @@ def collect_single_data():
     imgleft=prepareimage(img=img)
     lineinfo=splitline(imgleft)
     leftimgs=hsplit(imgleft,lineinfo)
-    return leftimgs
+    return leftimgs,imgleft
 
 
 def ai_solve():
     print("collect data")
-    imgs=collect_single_data()
+    imgs,imgleft=collect_single_data()
     for index,img in enumerate(imgs):
         # plt.subplot(8,1,index+1)
         # plt.imshow(img)
@@ -37,7 +37,7 @@ def ai_solve():
             else:
                 press_str("left")
         press_str("down")
-    cv2.imwrite("temp.png",imgs)
+    cv2.imwrite("temp.png",imgleft)
     # for i in range(8):
     #     press_str("right")
     #     press_str("down")

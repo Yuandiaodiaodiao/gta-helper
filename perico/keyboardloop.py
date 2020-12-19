@@ -72,7 +72,7 @@ def tp_hack():
     time.sleep(0.5)
     for item in downlist:
         press_str("enter")
-        time.sleep(0.5)
+        time.sleep(1)
         for i in range(item):
             press_str("down")
         time.sleep(0.5)

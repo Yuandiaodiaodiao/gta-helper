@@ -7,7 +7,11 @@
   display: flex;
   flex-direction: column;
 }
-
+.el-footer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
 .lineinput {
   display: flex;
   align-items: center;
@@ -53,6 +57,10 @@
         <el-input placeholder="f9" v-model="config.perico"></el-input>
       </div>
       <div class="lineinput">
+        挂机 :
+        <el-input placeholder="null" v-model="config.afk"></el-input>
+      </div>
+      <div class="lineinput">
         停止所有正在运行的动作 :
         <el-input placeholder="backspace" v-model="config.stop"></el-input>
       </div>
@@ -77,7 +85,10 @@
         <el-input v-for="item in [0,1,2,3]" v-model="config.cast[item]"></el-input>
       </div>
     </el-main>
-    <el-footer>Footer</el-footer>
+    <el-footer>
+      <div>@Yuandiaodiaodiao</div>
+      <a href="https://github.com/Yuandiaodiaodiao/gta-helper">使用方法 & 源代码 & bug-report</a>
+    </el-footer>
   </el-container>
 </template>
 
