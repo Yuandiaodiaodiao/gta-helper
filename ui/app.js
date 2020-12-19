@@ -5,7 +5,7 @@ function createWindow() {
     // 创建浏览器窗口
     win = new BrowserWindow({
         width: 1000,
-        height: 700,
+        height: 1000,
         // frame: false,
         // resizable: false, //禁止改变主窗口尺寸
         webPreferences: {

@@ -7,7 +7,8 @@
 - 全屏 无边框 窗口化 全面适配  
 ### 使用方法  
     1.前往https://github.com/Yuandiaodiaodiao/gta-helper/releases 下载最新版本  
-2.百度云下载  
+2.百度云下载链接：https://pan.baidu.com/s/1pHOQDSd0R0YwmiohUyoFGA 
+提取码：6y4z   
 3.clone项目 本地构建 详细构建方法可见.github/workflows  
 ### 核心思路
 首先 这次的每个小格子都是有顺序的 也就是说如果当前格子里是第一个  
