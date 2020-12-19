@@ -1,0 +1,50 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "viteinit": "vite",
+    "start": "cross-env NODE_ENV=development electron .   ",
+    "build-python": "pyinstaller ../src/main.py --clean --distpath ./pydist",
+    "dist": "electron-builder",
+    "dev": "cross-env NODE_ENV=development vite",
+    "build": "vite build",
+    "buildall": "vite build &&  electron-builder"
+  },
+  "build": {
+    "files": [
+      "!node_modules/*"
+    ],
+    "appId": "com.yuandiaodiao.gtahelper",
+    "asar": false,
+    "directories": {
+      "output": "build"
+    },
+    "win": {
+      "requestedExecutionLevel": "highestAvailable",
+      "icon": "public/favicon.png",
+      "target": [
+        "nsis",
+        "zip"
+      ],
+      "extraResources": {
+        "from": "./keyboardloop/",
+        "to": "keyboardloop"
+      }
+    }
+  },
+  "author": "",
+  "devDependencies": {
+    "@vue/compiler-sfc": "^3.0.4",
+    "cross-env": "^7.0.2",
+    "electron": "^11.0.3",
+    "electron-builder": "^22.9.1",
+    "vite": "^1.0.0-rc.13"
+  },
+  "dependencies": {
+    "@iarna/toml": "^2.2.5",
+    "element-plus": "^1.0.1-beta.10",
+    "vue": "^3.0.4"
+  }
+}

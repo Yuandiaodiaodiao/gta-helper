@@ -6,6 +6,6 @@
 __pycache__
 
 perico/runs
-perico/model
+
 perico/train
 temp.png

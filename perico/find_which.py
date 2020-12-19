@@ -5,18 +5,19 @@ from PIL import Image
 from timeshow import timeShow
 import cv2
 import numpy as np
-
-
+from model_class.mobilenet_v3 import MobileNetV3_Large
+from argsolver import  args
 class TestCore():
     def __init__(self, net_title=""):
         d = device('cpu')
+        self.gpu=False
         try:
-            save = load(f'./model/{net_title}', map_location=d)
+            save = load(f'{args.modelpath}/{net_title}', map_location=d)
             self.model = save["model"]
             self.model.eval()
             self.minisave()
         except:
-            print("加载debug模型失败")
+            # print("加载debug模型失败")
             pass
         self.transform = transforms.Compose([
             transforms.Resize((224, 224)),
@@ -39,23 +40,19 @@ class TestCore():
             return ans
 
     def minisave(self):
-        torch.save({"model_static": self.model.state_dict()}, './model/model.pkl', _use_new_zipfile_serialization=False)
+        torch.save(self.model, f"{args.modelpath}/modelall.pkl")
 
     def miniload(self):
-        import model_class.mobilenet_v3
-        self.model = model_class.mobilenet_v3.MobileNetV3_Large(num_classes=8)
         d = device('cpu')
-        save = load(f'./model/model.pkl', map_location=d)
-        state = save["model_static"]
-        self.model.load_state_dict(state)
+        self.model = load(f'{args.modelpath}/modelall.pkl', map_location=d)
         self.model.eval()
 
 
 if __name__ == "__main__":
-    NetTitle = "mobileNet-largeBest2"
+    NetTitle = "mobileNet-large-datafixBestEnd"
     core = TestCore(NetTitle)
-    core.minisave()
     core.miniload()
-    img=cv2.imread('train/4/1608275723315-1.png')
+
+    img=cv2.imread('train/4/1608310350497-3.png')
     res = core.testimg(img)
     print(res)

@@ -1,8 +1,7 @@
-from getscreennew import castimg, getpicture
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import aircv as ac
+
 import time
 import phash
 from functools import reduce
@@ -11,18 +10,6 @@ from img_trim import trim_iterative
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='TRUE'
 
-RESOLUTION_PERSETS={
-    "1080p":[1920,1080],
-    "2k":[2560,1440],
-    "4k":[3840,2160]
-}
-RESOLUTION=RESOLUTION_PERSETS["4k"]
-def get_gtav_image(FULLRES=RESOLUTION):
-    # img = getpicture("Grand Theft Auto V", mode="fullscreen", FULLRES=[3840, 2160])
-    img = getpicture("Grand Theft Auto V",
-                     mode="fullscreen",
-                     FULLRES=FULLRES)
-    return img
 
 
 def findresult_phash(temp, target):
@@ -40,7 +27,7 @@ def ssim_match(imfil1, imfil2):
 
 def findresult(temp, target, thor=0.3, bgremove=False):
     # cv2.imshow('objDetect1', target)
-
+    import aircv as ac
     # find the match position
     pos = ac.find_template(temp, target, threshold=thor, bgremove=bgremove)
     if pos is None:
@@ -96,58 +83,9 @@ def prepareimage(cast1=None,
     return imgleft, imgright, imgright_bgr
 
 
-def splitline(imgleft):
-    lh, lw = imgleft.shape
-    lineinfo = []
-    maxline = lw * 255
-    for i in range(lh):
-        linesum = np.sum(imgleft[i])
-        if linesum >= maxline * 0.95:
-            lineinfo.append(i)
-    # print(lineinfo)
-    lineinfo_unique = []
-    last = -1
-    temp = []
-    temp2 = []
-    for i in lineinfo:
-        if i == last + 1:
-            temp.append(i)
-        else:
-            if temp is not None and len(temp) > 0:
-                temp2.append(temp)
-            temp = [i]
-        last = i
-    if temp is not None and len(temp) > 0:
-        temp2.append(temp)
-    # print(temp2)
-    # 第一个进入的线是 第一个框的上粗线
-    flip = -1
-    for i in temp2:
-        # flip==0 取上边缘-1
-        # flip==-1 取下边缘+1
-        if flip == 0:
-            i[flip] -= 3
-        elif flip == -1:
-            i[flip] += 3
-        lineinfo_unique.append(i[flip])
-        flip ^= -1
 
 
-    if len(lineinfo_unique) % 2 != 0:
-        print("警告 lineinfo不是2的倍数")
-    print(f"拆分为{len(lineinfo_unique)/2}份")
-    return lineinfo_unique
 
-
-def hsplit(image, lineinfo):
-    h, w = image.shape[0], image.shape[1]
-    res = []
-    for start, end in zip(*([iter(lineinfo)] * 2)):
-        cast = [start, end, 0, w]
-        print(cast)
-        ileft = castimg(image, cast)
-        res.append(ileft)
-    return res
 
 
 def solve(cast1=None,
@@ -226,15 +164,7 @@ def solve(cast1=None,
     return bingdingls, realconf
 
 
-def from_to(nowpos, selfid):
-    if nowpos < selfid:
-        # 往右直接走就行
-        return selfid - nowpos
-    elif nowpos == selfid:
-        return 0
-    else:
-        # 小于 要往左走 换算成先走到0 然后再走到对应位置
-        return 8 - nowpos + selfid
+
 
 
 def mulsolve2(press_str):

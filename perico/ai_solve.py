@@ -1,27 +1,23 @@
 from keyboardsim import press_str
-from main import get_gtav_image,prepareimage,splitline,hsplit
-import matplotlib.pyplot as plt
+
+# import matplotlib.pyplot as plt
 import cv2
 import os
 import time
 import find_which
-from main import from_to
+from prepare import *
 import numpy as np
-core=find_which.TestCore("mobileNet-large-datafixBest1")
+core=find_which.TestCore("mobileNet-large-datafixBestEnd")
 core.miniload()
+
 def collect_single_data():
     img=get_gtav_image()
-    imgleft,_,_=prepareimage(img=img)
+    imgleft=prepareimage(img=img)
     lineinfo=splitline(imgleft)
     leftimgs=hsplit(imgleft,lineinfo)
     return leftimgs
 
-def rightstep_optimize(rightstep):
-    rightstep%=8
-    if rightstep>=5:
-        leftstep=8-rightstep
-        return -leftstep
-    return rightstep
+
 def ai_solve():
     print("collect data")
     imgs=collect_single_data()
@@ -37,14 +33,15 @@ def ai_solve():
 
         for i in range(abs(rightstep)):
             if rightstep>0:
-                press_str("right")
+                press_str("right",cooldown=0)
             else:
-                press_str("left")
-        press_str("down")
+                press_str("left",cooldown=0)
+        press_str("down",cooldown=0)
+    cv2.imwrite("temp.png",imgs)
     # for i in range(8):
     #     press_str("right")
     #     press_str("down")
-    plt.show()
+    # plt.show()
 
 if __name__=="__main__":
     collect_single_data()

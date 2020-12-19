@@ -1,5 +1,6 @@
-aircv
-pynput
+pynput==1.6.8
+numpy==1.19
 opencv-python
-numpy
-matplotlib
+pyinstaller
+pywin32
+argparse
