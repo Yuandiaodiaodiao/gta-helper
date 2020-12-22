@@ -3,11 +3,12 @@ from argsolver import  args
 import cv2
 import numpy as np
 from getscreennew import getpicture
+from logger import logger
 
 
 def get_gtav_image(FULLRES=[1920,1080]):
     FULLRES=[args.width,args.height]
-    print(FULLRES)
+    logger.info(FULLRES)
     # img = getpicture("Grand Theft Auto V", mode="fullscreen", FULLRES=[3840, 2160])
     if args.mode=="fullscreen":
         img = getpicture("Grand Theft Auto V",
@@ -83,8 +84,8 @@ def splitline(imgleft):
 
 
     if len(lineinfo_unique) % 2 != 0:
-        print("警告 lineinfo不是2的倍数")
-    print(f"拆分为{len(lineinfo_unique)/2}份")
+        logger.warning("警告 lineinfo不是2的倍数")
+    logger.info(f"拆分为{len(lineinfo_unique)/2}份")
     return lineinfo_unique
 
 def hsplit(image, lineinfo):

@@ -1,16 +1,15 @@
 import torch
-import torch.nn as nn
 from prepare import get_gtav_image,prepareimage
 import cv2
-import win32api
 
 img = get_gtav_image()
 print(img.shape)
 imgleft=prepareimage(img=img)
 cv2.imwrite('temp.png',imgleft)
 exit(0)
-import alexnet
-model=alexnet.alexnet(fcoutput=512)
+from model_class import alexnet
+
+model= alexnet.alexnet(fcoutput=512)
 from model_class.mobilenet_v3 import MobileNetV3_Large
 model=MobileNetV3_Large(num_classes=8)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

@@ -6,6 +6,7 @@
   "scripts": {
     "viteinit": "vite",
     "start": "cross-env NODE_ENV=development electron .   ",
+    "debug": "cross-env NODE_ENV=development electron .  --inspect ",
     "build-python": "pyinstaller ../src/main.py --clean --distpath ./pydist",
     "dist": "electron-builder",
     "dev": "cross-env NODE_ENV=development vite",
@@ -44,6 +45,7 @@
   "dependencies": {
     "@iarna/toml": "^2.2.5",
     "element-plus": "^1.0.1-beta.10",
+    "iconv-lite": "^0.6.2",
     "vue": "^3.0.4"
   }
 }

@@ -7,11 +7,13 @@
   display: flex;
   flex-direction: column;
 }
-.el-footer{
+
+.el-footer {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
 }
+
 .lineinput {
   display: flex;
   align-items: center;
@@ -70,7 +72,16 @@
         如果丢键可以开高这个) :
         <el-input placeholder="0" v-model="config.keydelay"></el-input>
       </div>
-      <el-button style="width: 100px;margin: 10px" @click="restart()">重启服务</el-button>
+      <div class="lineinput">
+        关闭服务 :
+        <el-input placeholder="delete" v-model="config.allstop"></el-input>
+      </div>
+      <div class="lineinput">
+        <el-button style="width: 100px;margin: 10px" @click="restart()">重启服务</el-button>
+        <el-button style="width: 100px;margin: 10px" @click="stop()">关闭服务</el-button>
+        <el-button style="width: 100px;margin: 10px" @click="debugstart()">debug菜单</el-button>
+      </div>
+
       <div class="lineinput">
         高级选项:
         <el-switch
@@ -81,7 +92,7 @@
       </div>
 
       <div v-show="advanced" class="lineinput">
-       左侧指纹图像裁切比例 :
+        左侧指纹图像裁切比例 :
         <el-input v-for="item in [0,1,2,3]" v-model="config.cast[item]"></el-input>
       </div>
     </el-main>
@@ -93,7 +104,7 @@
 </template>
 
 <script>
-import {reactive, watch, ref,onMounted} from 'vue'
+import {reactive, watch, ref, onMounted} from 'vue'
 import {ElMessage} from 'element-plus'
 
 const loadconfig = () => {
@@ -106,7 +117,8 @@ const loadconfig = () => {
     stop: 'backspace',
     mode: 'fullscreen',
     cast: [0.317, 0.885, 0.226, 0.4165],
-    keydelay:0,
+    keydelay: 0,
+    allstop:'delete'
   }
   const fs = require("fs")
   try {
@@ -136,8 +148,14 @@ export default {
     const config = reactive(loadconfig())
     let timeoutHandle = null
     const ipcRenderer = require("electron").ipcRenderer
-    const restart=()=>{
-      ipcRenderer.send("restart",JSON.stringify(config))
+    const restart = () => {
+      ipcRenderer.send("restart", JSON.stringify(config))
+    }
+    const stop = () => {
+      ipcRenderer.send("stop")
+    }
+    const debugstart = () => {
+      ipcRenderer.send('debug')
     }
     onMounted(restart)
 
@@ -151,13 +169,16 @@ export default {
         ElMessage.success({message: "设置应用成功", duration: 500})
       }, 500)
     })
-    ipcRenderer.on("reportState",(event,msg)=>{
-      if(status.value!==msg){
-        status.value=msg
+    ipcRenderer.on("reportState", (event, msg) => {
+      if (status.value !== msg) {
+        status.value = msg
       }
     })
+    ipcRenderer.on('log',(event, args) => {
+      console.log(args)
+    })
     const windowOtions = ["fullscreen", "borderless", 'window']
-    return {config, status, windowOtions, advanced,restart}
+    return {config, status, windowOtions, advanced, restart, stop, debugstart}
   }
 }
 

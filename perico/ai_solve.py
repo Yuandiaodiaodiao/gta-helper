@@ -6,7 +6,7 @@ import os
 import time
 import find_which
 from prepare import *
-import numpy as np
+from logger import logger
 core=find_which.TestCore("mobileNet-large-datafixBestEnd")
 core.miniload()
 
@@ -19,7 +19,7 @@ def collect_single_data():
 
 
 def ai_solve():
-    print("collect data")
+    logger.info('collect data')
     imgs,imgleft=collect_single_data()
     for index,img in enumerate(imgs):
         # plt.subplot(8,1,index+1)
@@ -29,8 +29,7 @@ def ai_solve():
         # res=core.testimg(np.reshape(img,(img.shape[0],img.shape[1],1)))
         rightstep=from_to(res,index)
         rightstep=rightstep_optimize(rightstep)
-        print(f"{res} -> {index}  {rightstep}")
-
+        logger.info(f"{res} -> {index}  {rightstep}")
         for i in range(abs(rightstep)):
             if rightstep>0:
                 press_str("right")

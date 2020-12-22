@@ -11,4 +11,5 @@ parser.add_argument('--mode', type=str, help='显示模式 全屏 无边框 窗�
 parser.add_argument('--cast',  help='左侧指纹的切片选项',nargs="+",type=float,default=[0.317, 0.885, 0.226, 0.4165])
 parser.add_argument('--modelpath',  help='模型路径',type=str,default="./model")
 parser.add_argument('--keydelay',  help='按键延迟',type=float,default="0")
+parser.add_argument('--allstop',  help='停止服务',type=str,default="delete")
 args = parser.parse_args()

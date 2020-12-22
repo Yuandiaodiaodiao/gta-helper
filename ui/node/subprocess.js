@@ -2,6 +2,7 @@ const path = require("path");
 const getpath = require("./getpath.js");
 
 let script = getpath(path.join("keyboardloop", "keyboardloop.exe"));
+// script = getpath(path.join("loggingtest", "loggingtest.exe"));
 function generateArgs(arg){
     let args=[]
     Object.entries(arg).forEach(([key,value])=>{
@@ -16,21 +17,19 @@ function generateArgs(arg){
     return args
 }
 
-function newprocess(args){
+function newprocess(args,callback){
     args=generateArgs(args)
     args.push("--modelpath")
     args.push(getpath(path.join("keyboardloop", "model")))
     console.log(args)
     console.log(script)
-    let pyProc = require("child_process").execFile(script, args);
+    let scriptstr=args.join(" ")
+    let pyProc = require("child_process").execFile(script, args,{ encoding: 'gbk' },callback);
+    // let cmdstr=`${script} ${scriptstr}`
+    // console.log(cmdstr)
+    // let pyProc = require("child_process").exec(cmdstr,{ encoding: 'gbk' });
 
-    pyProc.stdout.on("data", (data) => {
-        console.log(`stdout: ${data}`);
-    });
-    pyProc.stderr.on("data", (data) => {
 
-        console.error(`${data}`);
-    });
     pyProc.on("close", (code) => {
         console.log(`child_process exit, code= ${code}`);
     });

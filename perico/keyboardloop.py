@@ -6,7 +6,7 @@ RESOLUTION_PERSETS={
 }
 RESOLUTION=RESOLUTION_PERSETS["4k"]
 from argsolver import args
-
+from logger import logger
 
 threadPool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="exec")
 from pynput.keyboard import Listener
@@ -111,16 +111,17 @@ def presskey(key):
     #     cv2.imwrite("temp.png", img)
     if t == args.perico:
         # 指纹破解
-        print("submit perico")
+        # logging.warning("submit perico")
+        logger.info('perico start')
         threadPool.submit(ai_solve)
         # ai_solve()
     if t == args.afk:
         #自动挂机
-        print("afk start")
+        logger.info("afk start")
         threadPool.submit(afk)
     if t ==args.stop:
         #停止当前的动作
-        print("stop")
+        logger.info("stop")
         restart()
     if t  =="eeeee":
         #给深度学习构建数据集
@@ -134,13 +135,14 @@ def presskey(key):
             for j in range(i):
                 press_str("right")
             press_str("down")
-    if t == "delete eeeee":
+    if t == args.allstop:
         #停止进程
-        restart()
+        stop()
         exit(0)
+        raise Exception
 
 
 if __name__ == '__main__':
-    print("start!")
+    logger.info("start!")
     with Listener(on_press=presskey) as listener:
         listener.join()

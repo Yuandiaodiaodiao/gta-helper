@@ -2,6 +2,7 @@ import time
 import win32gui, win32ui, win32con, win32api
 import ctypes.wintypes
 import numpy as np
+from logger import logger
 
 
 def get_current_size(hwnd):
@@ -34,7 +35,7 @@ def gethwnd(hwname):
         #     print(h, t)
         if t == hwname:
             return h
-    print(f"{hwname} 未找到")
+    logger.error(f"{hwname} 未找到")
     return 0
 
 
