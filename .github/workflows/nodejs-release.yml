@@ -42,4 +42,13 @@ jobs:
         file: ui/build/gta-helper Setup 1.0.0.exe
         asset_name: gta-helper.exe
         tag: ${{ github.ref }}
+
+    - name: Upload binaries to release
+      if: ${{ github.event_name == 'release'}}
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.YZH_TOKEN }}
+        file: ui/build/gta-helper-1.0.0-win.zip
+        asset_name: gta-helper.zip
+        tag: ${{ github.ref }}
     
