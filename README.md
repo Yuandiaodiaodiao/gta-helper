@@ -5,11 +5,18 @@
 - UI-> Vue3.0 + vite + elementui-plus +electron  
 - 后端使用mobilenetv3作为核心模型0.05秒识别一个指纹区域  
 - 全屏 无边框 窗口化 全面适配  
+
 ### 使用方法  
     1.前往https://github.com/Yuandiaodiaodiao/gta-helper/releases 下载最新版本  
 2.百度云下载链接：https://pan.baidu.com/s/1pHOQDSd0R0YwmiohUyoFGA 
 提取码：6y4z   
-3.clone项目 本地构建 详细构建方法可见.github/workflows  
+3.clone项目 本地构建 详细构建方法可见.github/workflows 
+### 无法使用?  
+ 1.管理员模式启动  
+ 2.游戏里打开esc菜单后按一键提高产量看有无反应   
+ 3.使用全屏幕16:9长宽比玩游戏  否则需要阅读下面的 "对于非16:9屏幕的兼容"  
+ 4.点击debug菜单 或者打开程序目录下的gta-hepler-log.txt 并按照5的链接来贴吧和我对线
+ 5.贴吧发图http://tieba.baidu.com/p/7159336951  
 ### 核心思路
 首先 这次的每个小格子都是有顺序的 也就是说如果当前格子里是第一个  
 你想要他是第四个 那直接往右4个就好了
