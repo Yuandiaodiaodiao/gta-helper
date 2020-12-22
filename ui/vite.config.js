@@ -8,7 +8,7 @@ export default {
         "/@/": root,
     },
     rollupInputOptions: {
-        external: ["fs", "path", "stream", "electron","iconv-lite"],
+        external: ["fs", "path", "stream", "electron","iconv-lite","buffer"],
     },
     rollupOutputOptions: {
         format: "commonjs",

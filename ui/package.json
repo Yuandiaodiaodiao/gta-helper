@@ -40,11 +40,11 @@
     "cross-env": "^7.0.2",
     "electron": "^11.0.3",
     "electron-builder": "^22.9.1",
-    "vite": "^1.0.0-rc.13",
-    "iconv-lite": "^0.6.2"
+    "vite": "^1.0.0-rc.13"
   },
   "dependencies": {
     "element-plus": "^1.0.1-beta.10",
-    "vue": "^3.0.4"
+    "vue": "^3.0.4",
+    "iconv-lite": "^0.6.2"
   }
 }
