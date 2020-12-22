@@ -4,3 +4,4 @@ opencv-python==4.4.0.46
 pyinstaller==4.1
 pywin32==300
 argparse
+aircv==1.4.6

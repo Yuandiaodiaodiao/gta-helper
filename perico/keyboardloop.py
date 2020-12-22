@@ -1,10 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, wait
-RESOLUTION_PERSETS={
-    "1080p":[1920,1080],
-    "2k":[2560,1440],
-    "4k":[3840,2160]
-}
-RESOLUTION=RESOLUTION_PERSETS["4k"]
+
 from argsolver import args
 from logger import logger
 
@@ -14,7 +9,7 @@ from keyboardsim import press_str
 import os
 import time
 from ai_solve import ai_solve
-
+from dc.dc_keypress import breakonce
 import threading
 
 def get_key_name(key):
@@ -98,9 +93,10 @@ def presskey(key):
     global threadPool
     t = get_key_name(key)
 
+    if t==args.dc:
+        threadPool.submit(breakonce)
 
-
-    if t == args.tp:
+    elif t == args.tp:
         #一键提高产量
         threadPool.submit(tp_hack)
 
@@ -109,33 +105,33 @@ def presskey(key):
     #     img = get_gtav_image()
     #     import cv2
     #     cv2.imwrite("temp.png", img)
-    if t == args.perico:
+    elif t == args.perico:
         # 指纹破解
         # logging.warning("submit perico")
         logger.info('perico start')
         threadPool.submit(ai_solve)
         # ai_solve()
-    if t == args.afk:
+    elif t == args.afk:
         #自动挂机
         logger.info("afk start")
         threadPool.submit(afk)
-    if t ==args.stop:
+    elif t ==args.stop:
         #停止当前的动作
         logger.info("stop")
         restart()
-    if t  =="eeeee":
+    elif t  =="eeeee":
         #给深度学习构建数据集
         # 采样 并切割图片 写入文件夹 创建label
         from train_data_collect import collect_data
         # threadPool.submit(collect_data)
         collect_data()
-    if t == "eeeeeee":
+    elif t == "eeeeeee":
         #调到都是0号指纹后自动破解
         for i in range(8):
             for j in range(i):
                 press_str("right")
             press_str("down")
-    if t == args.allstop:
+    elif t == args.allstop:
         #停止进程
         stop()
         exit(0)

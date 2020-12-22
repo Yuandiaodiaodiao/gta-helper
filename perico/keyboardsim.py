@@ -21,7 +21,7 @@ keybind = {
     "right": RIGHT,
     'enter': ENTER,
     "esc": 27,
-
+    'tab':9
 }
 
 

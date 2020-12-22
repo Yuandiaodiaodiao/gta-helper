@@ -59,6 +59,10 @@
         <el-input placeholder="f9" v-model="config.perico"></el-input>
       </div>
       <div class="lineinput">
+        赌场指纹破解 :
+        <el-input placeholder="f10" v-model="config.dc"></el-input>
+      </div>
+      <div class="lineinput">
         挂机 :
         <el-input placeholder="null" v-model="config.afk"></el-input>
       </div>
@@ -118,7 +122,8 @@ const loadconfig = () => {
     mode: 'fullscreen',
     cast: [0.317, 0.885, 0.226, 0.4165],
     keydelay: 0,
-    allstop:'delete'
+    allstop:'delete',
+    dc:'f10'
   }
   const fs = require("fs")
   try {
