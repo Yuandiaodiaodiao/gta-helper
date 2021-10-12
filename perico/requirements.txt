@@ -1,6 +1,6 @@
 pynput==1.6.8
 numpy==1.19
-opencv-python==4.4.0.46
+opencv-python==4.2.0.32
 pyinstaller==4.1
 pywin32==300
 argparse
