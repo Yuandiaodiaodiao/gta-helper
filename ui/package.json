@@ -38,7 +38,7 @@
   "devDependencies": {
     "@vue/compiler-sfc": "^3.0.4",
     "cross-env": "^7.0.2",
-    "electron": "^11.0.3",
+    "electron": "^15.5.5",
     "electron-builder": "^22.9.1",
     "vite": "^1.0.0-rc.13"
   },
