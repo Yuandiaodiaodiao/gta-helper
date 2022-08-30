@@ -40,7 +40,7 @@
     "cross-env": "^7.0.2",
     "electron": "^11.0.3",
     "electron-builder": "^22.9.1",
-    "vite": "^1.0.0-rc.13"
+    "vite": "^2.9.13"
   },
   "dependencies": {
     "element-plus": "^1.0.1-beta.10",
